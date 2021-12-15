@@ -1,29 +1,24 @@
-![go workers](https://raw.githubusercontent.com/catmullet/go-workers/assets/constworker_header_anim.gif)
-
-[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge-flat.svg)](https://github.com/avelino/awesome-go#goroutines)
-[![Maintainability](https://api.codeclimate.com/v1/badges/402fee86fbd1e24defb2/maintainability)](https://codeclimate.com/github/catmullet/go-workers/maintainability)
-[![GoCover](http://gocover.io/_badge/github.com/catmullet/go-workers)](http://gocover.io/github.com/catmullet/go-workers)
-[![Go Reference](https://pkg.go.dev/badge/github.com/catmullet/go-workers.svg)](https://pkg.go.dev/github.com/catmullet/go-workers)
+![go workers](https://raw.githubusercontent.com/insubordination/work/assets/constworker_header_anim.gif)
 
 # Examples
-* [Quickstart](https://github.com/catmullet/go-workers/blob/master/examples/quickstart/quickstart.go)
-* [Multiple Go Workers](https://github.com/catmullet/go-workers/blob/master/examples/multiple_workers/multipleworkers.go)
-* [Passing Fields](https://github.com/catmullet/go-workers/blob/master/examples/passing_fields/passingfields.go)
+* [Quickstart](https://github.com/insubordination/work/blob/master/examples/quickstart/quickstart.go)
+* [Multiple Go Workers](https://github.com/insubordination/work/blob/master/examples/multiple_workers/multiplework.go)
+* [Passing Fields](https://github.com/insubordination/work/blob/master/examples/passing_fields/passingfields.go)
 # Getting Started
 ### Pull in the dependency
 ```zsh
-go get github.com/catmullet/go-workers
+go get github.com/insubordination/work
 ```
 
 ### Add the import to your project
-giving an alias helps since go-workers doesn't exactly follow conventions.    
+giving an alias helps since work doesn't exactly follow conventions.    
 _(If you're using a JetBrains IDE it should automatically give it an alias)_
 ```go
 import (
-    workers "github.com/catmullet/go-workers"
+    "github.com/insubordination/work"
 )
 ```
-### Create a new worker <img src="https://raw.githubusercontent.com/catmullet/go-workers/assets/constworker.png" alt="worker" width="35"/>
+### Create a new worker <img src="https://raw.githubusercontent.com/insubordination/work/assets/constworker.png" alt="worker" width="35"/>
 The NewWorker factory method returns a new worker.    
 _(Method chaining can be performed on this method like calling .Work() immediately after.)_
 ```go
@@ -37,7 +32,7 @@ func (my *MyWorker) Work(in interface{}, out chan<- interface{}) error {
 	// work iteration here
 }
 
-runner := workers.NewRunner(ctx, NewMyWorker(), numberOfWorkers)
+runner := work.NewRunner(ctx, NewMyWorker(), numberOfWorkers)
 ```
 ### Send work to worker
 Send accepts an interface.  So send it anything you want.
@@ -57,22 +52,22 @@ if err := runner.Wait(); err != nil {
 
 By using the InFrom method you can tell `workerTwo` to accept output from `workerOne`
 ```go
-runnerOne := workers.NewRunner(ctx, NewMyWorker(), 100).Work()
-runnerTwo := workers.NewRunner(ctx, NewMyWorkerTwo(), 100).InFrom(workerOne).Work()
+runnerOne := work.NewRunner(ctx, NewMyWorker(), 100).Work()
+runnerTwo := work.NewRunner(ctx, NewMyWorkerTwo(), 100).InFrom(workerOne).Work()
 ```
 ### Accepting output from multiple workers
 It is possible to accept output from more than one worker but it is up to you to determine what is coming from which worker.  (They will send on the same channel.)
 ```go
-runnerOne := workers.NewRunner(ctx, NewMyWorker(), 100).Work()
-runnerTwo := workers.NewRunner(ctx, NewMyWorkerTwo(), 100).Work()
-runnerThree := workers.NewRunner(ctx, NewMyWorkerThree(), 100).InFrom(workerOne, workerTwo).Work()
+runnerOne := work.NewRunner(ctx, NewMyWorker(), 100).Work()
+runnerTwo := work.NewRunner(ctx, NewMyWorkerTwo(), 100).Work()
+runnerThree := work.NewRunner(ctx, NewMyWorkerThree(), 100).InFrom(workerOne, workerTwo).Work()
 ```
 
 ## Passing Fields To Workers
 ### Adding Values
 Fields can be passed via the workers object. Be sure as with any concurrency in Golang that your variables are concurrent safe.  Most often the golang documentation will state the package or parts of it are concurrent safe.  If it does not state so there is a good chance it isn't.  Use the sync package to lock and unlock for writes on unsafe variables.  (It is good practice NOT to defer in the work function.)
 
-<img src="https://raw.githubusercontent.com/catmullet/go-workers/assets/constworker2.png" alt="worker" width="35"/> **ONLY** use the `Send()` method to get data into your worker. It is not shared memory unlike the worker objects values.
+<img src="https://raw.githubusercontent.com/insubordination/work/assets/constworker2.png" alt="worker" width="35"/> **ONLY** use the `Send()` method to get data into your worker. It is not shared memory unlike the worker objects values.
 
 ```go
 type MyWorker struct {
@@ -87,7 +82,7 @@ func (my *MyWorker) Work(in interface{}, out chan<- interface{}) error {
 	fmt.Println(my.message)
 }
 
-runner := workers.NewRunner(ctx, NewMyWorker(), 100).Work()
+runner := work.NewRunner(ctx, NewMyWorker(), 100).Work()
 ```
 
 ### Setting Timeouts or Deadlines

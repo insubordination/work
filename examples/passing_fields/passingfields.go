@@ -1,3 +1,4 @@
+//go:build ignore
 // +build ignore
 
 package main
@@ -5,7 +6,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/catmullet/go-workers"
+	"github.com/insubordination/work"
 	"math/rand"
 )
 
